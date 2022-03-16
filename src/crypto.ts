@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { Address, OnionNode } from './onionNodes'
 
 const ALGORITHM = 'aes-256-cbc'
 const ENCODING = 'hex'
@@ -22,4 +23,17 @@ export const decrypt = (data: string, key: string) => {
 		decipher.update(encryptedData),
 		decipher.final(),
 	]).toString()
+}
+
+interface Block {
+	nextNodeAddress: Address
+	data: string
+}
+
+export function createEncryptedBlock(data: string, nextNode: OnionNode) {
+	const block: Block = {
+		nextNodeAddress: nextNode.address,
+		data: data,
+	}
+	return encrypt(JSON.stringify(block), nextNode.key)
 }
