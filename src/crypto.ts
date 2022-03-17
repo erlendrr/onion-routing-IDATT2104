@@ -25,15 +25,44 @@ export const decrypt = (data: string, key: string) => {
 	]).toString()
 }
 
-interface Block {
+export interface Block {
 	nextNodeAddress: Address
 	data: string
 }
 
-export function createEncryptedBlock(data: string, nextNode: OnionNode) {
+export function createEncryptedBlock(data: string, nextAddress: Address, key: string) {
 	const block: Block = {
-		nextNodeAddress: nextNode.address,
+		nextNodeAddress: nextAddress,
 		data: data,
 	}
-	return encrypt(JSON.stringify(block), nextNode.key)
+	return encrypt(JSON.stringify(block), key)
+}
+
+export function decryptEncryptedBlock(block: string, key: string): string{
+	return decrypt(block, key)
+}
+
+export function createPackets(data: string, nodes: OnionNode[], i: number, goal: Address): string{
+	if(i < 0){
+		return data;
+	}
+	if(i == nodes.length - 1){
+		return createPackets(createEncryptedBlock(data, goal, nodes[i].key), nodes, i - 1, goal)
+	}
+	return createPackets(createEncryptedBlock(data, nodes[i+1].address, nodes[i].key), nodes, i - 1, goal)
+}
+
+export function parseBlock(block: string): Block{
+	return JSON.parse(block)
+}
+
+export function decryptPackets(data: string, nodes: OnionNode[], i: number): Block{
+	if (i > nodes.length-1){
+		return parseBlock(data)
+	}
+	if (i === 0){
+		return decryptPackets(decryptEncryptedBlock(data, nodes[i].key), nodes, i+1)
+	}
+	console.log(parseBlock(data))
+	return decryptPackets(decryptEncryptedBlock(parseBlock(data).data, nodes[i].key), nodes, i+1)
 }
