@@ -29,7 +29,7 @@ export interface Block {
 	nextNodeAddress: Address
 	data: string
 }
-
+//TODO: create block
 export function createEncryptedBlock(data: string, nextAddress: Address, key: string) {
 	const block: Block = {
 		nextNodeAddress: nextAddress,
@@ -63,6 +63,5 @@ export function decryptPackets(data: string, nodes: OnionNode[], i: number): Blo
 	if (i === 0){
 		return decryptPackets(decryptEncryptedBlock(data, nodes[i].key), nodes, i+1)
 	}
-	console.log(parseBlock(data))
 	return decryptPackets(decryptEncryptedBlock(parseBlock(data).data, nodes[i].key), nodes, i+1)
 }
