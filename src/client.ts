@@ -3,18 +3,12 @@ import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
 
-/**
- * DATA TO SEND, NODES TO USE, FINAL DESTINATION
- */
 const data = 'potato'
 const nodes = onionNodes
 const goal: Address = {
 	ip: 'http://localhost',
 	port: 3000,
 }
-/**
- * THE BLOCK TO SEND TO THE FIRST NODE
- */
 
 function shuffle(arr: OnionNode[]) {
 	for (var i = arr.length - 1; i > 0; i--) {
@@ -26,18 +20,6 @@ function shuffle(arr: OnionNode[]) {
 }
 shuffle(nodes)
 
-const encryptedData: Block = {
-	nextNodeAddress: onionNodes[0].address,
+axios.post(`${nodes[0].address.ip}:${nodes[0].address.port}`, {
 	data: createPackets(data, nodes, onionNodes.length - 1, goal),
-}
-/**
- * THE DATA DECRYPTED ONE BY ONE, WILL RETURN THE FINAL BLOCK TO SEND TO VG.NO "GET".
- */
-const decryptData = decryptPackets(encryptedData.data, nodes, 0)
-
-axios.post(
-	`${encryptedData.nextNodeAddress.ip}:${encryptedData.nextNodeAddress.port}`,
-	{
-		data: encryptedData.data,
-	}
-)
+})

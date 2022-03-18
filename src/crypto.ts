@@ -30,16 +30,11 @@ export interface Block {
 	data: string
 }
 //TODO: create block
-export function createEncryptedBlock(data: string, nextAddress: Address, key: string) {
-	const block: Block = {
+export function createBlock(data: string, nextAddress: Address): Block {
+	return {
 		nextNodeAddress: nextAddress,
 		data: data,
 	}
-	return encrypt(JSON.stringify(block), key)
-}
-
-export function decryptEncryptedBlock(block: string, key: string): string{
-	return decrypt(block, key)
 }
 
 export function createPackets(data: string, nodes: OnionNode[], i: number, goal: Address): string{
@@ -47,21 +42,17 @@ export function createPackets(data: string, nodes: OnionNode[], i: number, goal:
 		return data;
 	}
 	if(i == nodes.length - 1){
-		return createPackets(createEncryptedBlock(data, goal, nodes[i].key), nodes, i - 1, goal)
+		return createPackets(encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key), nodes, i - 1, goal)
 	}
-	return createPackets(createEncryptedBlock(data, nodes[i+1].address, nodes[i].key), nodes, i - 1, goal)
-}
-
-export function parseBlock(block: string): Block{
-	return JSON.parse(block)
+	return createPackets(encrypt(JSON.stringify(createBlock(data, nodes[i+1].address)), nodes[i].key), nodes, i - 1, goal)
 }
 
 export function decryptPackets(data: string, nodes: OnionNode[], i: number): Block{
 	if (i > nodes.length-1){
-		return parseBlock(data)
+		return JSON.parse(data)
 	}
 	if (i === 0){
-		return decryptPackets(decryptEncryptedBlock(data, nodes[i].key), nodes, i+1)
+		return decryptPackets(decrypt(data, nodes[i].key), nodes, i+1)
 	}
-	return decryptPackets(decryptEncryptedBlock(parseBlock(data).data, nodes[i].key), nodes, i+1)
+	return decryptPackets(decrypt(JSON.parse(data).data, nodes[i].key), nodes, i+1)
 }
