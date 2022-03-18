@@ -7,7 +7,7 @@ const data = 'potato'
 const nodes = onionNodes
 const goal: Address = {
 	ip: 'http://localhost',
-	port: 3000,
+	port: 3333,
 }
 
 function shuffle(arr: OnionNode[]) {

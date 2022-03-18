@@ -38,7 +38,7 @@ app.post('/', (req, res) => {
 	const data = req.body
 	console.log(data)
 })
-const port = 3000
+const port = 3333
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`)
 })

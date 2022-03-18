@@ -37,22 +37,48 @@ export function createBlock(data: string, nextAddress: Address): Block {
 	}
 }
 
-export function createPackets(data: string, nodes: OnionNode[], i: number, goal: Address): string{
-	if(i < 0){
-		return data;
+export function createPackets(
+	data: string,
+	nodes: OnionNode[],
+	i: number,
+	goal: Address
+): string {
+	if (i < 0) {
+		return data
 	}
-	if(i == nodes.length - 1){
-		return createPackets(encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key), nodes, i - 1, goal)
+	if (i == nodes.length - 1) {
+		return createPackets(
+			encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key),
+			nodes,
+			i - 1,
+			goal
+		)
 	}
-	return createPackets(encrypt(JSON.stringify(createBlock(data, nodes[i+1].address)), nodes[i].key), nodes, i - 1, goal)
+	return createPackets(
+		encrypt(
+			JSON.stringify(createBlock(data, nodes[i + 1].address)),
+			nodes[i].key
+		),
+		nodes,
+		i - 1,
+		goal
+	)
 }
 
-export function decryptPackets(data: string, nodes: OnionNode[], i: number): Block{
-	if (i > nodes.length-1){
+export function decryptPackets(
+	data: string,
+	nodes: OnionNode[],
+	i: number
+): Block {
+	if (i > nodes.length - 1) {
 		return JSON.parse(data)
 	}
-	if (i === 0){
-		return decryptPackets(decrypt(data, nodes[i].key), nodes, i+1)
+	if (i === 0) {
+		return decryptPackets(decrypt(data, nodes[i].key), nodes, i + 1)
 	}
-	return decryptPackets(decrypt(JSON.parse(data).data, nodes[i].key), nodes, i+1)
+	return decryptPackets(
+		decrypt(JSON.parse(data).data, nodes[i].key),
+		nodes,
+		i + 1
+	)
 }
