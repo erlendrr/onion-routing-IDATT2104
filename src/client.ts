@@ -1,4 +1,4 @@
-import { createPackets, decryptPackets, Block } from './crypto'
+import { createPackets, decryptPackets, Block, decrypt } from './crypto'
 import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
@@ -22,4 +22,8 @@ shuffle(nodes)
 
 axios.post(`${nodes[0].address.ip}:${nodes[0].address.port}`, {
 	data: createPackets(data, nodes, onionNodes.length - 1, goal),
+}).then(answer => {
+	console.log(decryptPackets(answer.data, onionNodes, 0))
 })
+
+

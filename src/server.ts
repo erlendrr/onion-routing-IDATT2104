@@ -1,6 +1,6 @@
 import axios from 'axios'
 import express from 'express'
-import { Block, decrypt } from './crypto'
+import {Block, decrypt, encrypt} from './crypto'
 import onionNodes, { OnionNode, Address } from './onionNodes'
 
 onionNodes.forEach(({ address, key }) => {
@@ -18,12 +18,15 @@ onionNodes.forEach(({ address, key }) => {
 		const encryptedData: string = req.body.data
 		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
-		await axios.post(
+		const answer = await axios.post(
 			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
 			{
 				data: data.data,
 			}
 		)
+		const reply = encrypt(JSON.stringify(answer.data), key)
+		console.log(reply +"\n")
+		res.send(reply)
 	})
 })
 
@@ -35,8 +38,9 @@ app.post('/', (req, res) => {
 		res.send('No data')
 		return
 	}
-	const data = req.body
-	console.log(data)
+	res.send({
+		data: req.body.data + " potata"
+	})
 })
 const port = 3333
 app.listen(port, () => {
