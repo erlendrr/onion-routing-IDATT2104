@@ -2,7 +2,7 @@ import { createPackets, decryptPackets, Block, decrypt } from './crypto'
 import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
-import { power } from './handshake'
+import power from './handshake'
 
 const data = `
 Hello world
