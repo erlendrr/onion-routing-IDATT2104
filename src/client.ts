@@ -25,6 +25,11 @@ function shuffle(arr: OnionNode[]) {
 shuffle(nodes)
 nodes.splice(0, nodes.length - 3)
 
+const key = {
+	private: '472B4B6250655368566D597133733676',
+	public: '5367566B59703273357638792F423F45',
+}
+
 nodes.forEach(node => {
 	axios
 		.post(`${node.address.ip}:${node.address.port}/hs`, {
