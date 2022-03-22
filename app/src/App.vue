@@ -1,31 +1,45 @@
 <script setup lang="ts">
-const nodeCount = 8
-const htmlData = `
-	<div>
-		<h1>Hello</h1>
-		<p>This is a test</p>
-	</div>
-`
+import axios from 'axios'
+import { ref } from 'vue'
+
+const ip = ref('')
+const port = ref('')
+const postData = ref('')
+
+const nodeCount = ref(0)
+
+const htmlData = ref('')
+
+async function post() {}
+
+async function get() {
+	const res = '<h1>test</h1>'
+	htmlData.value = res
+}
 </script>
 
 <template>
 	<div class="min-h-screen bg-slate-100">
 		<div class="container mx-auto p-8 md:py-8 md:px-16 space-y-8">
-			<h1 class="text-center text-4xl font-bold">Onion Routing</h1>
-			<section class="grid grid-cols-2 gap-8 rounded-md">
-				<div class="grid grid-cols-3 gap-4">
-					<div class="col-start-1 col-span-2">
+			<section class="space-y-2">
+				<h1 class="text-center text-4xl font-bold">Onion Routing</h1>
+				<p class="text-center">By <i>Erlend Ryan</i> & <i>Erlend Matre</i></p>
+			</section>
+			<section class="grid grid-cols-2 gap-4 rounded-md">
+				<div class="grid grid-cols-4 gap-4">
+					<div class="col-start-1 col-span-3 md:col-span-2">
 						<label for="ip">IP</label>
 						<input class="shadow-lg w-full" type="text" id="ip" />
 					</div>
-					<div class="">
+					<div class="col-start-1 col-span-2 md:col-start-auto md:col-span-1">
 						<label for="port">Port</label>
 						<input class="shadow-lg w-full" type="number" id="port" />
 					</div>
 					<button
-						class="bg-slate-800 col-start-1 text-white shadow-lg p-2 rounded-md col-span-2 lg:col-span-1"
+						@click="get"
+						class="bg-slate-800 col-start-1 col-span-2 text-white shadow-lg p-2 rounded-md"
 					>
-						Load webiste
+						Get HTML
 					</button>
 				</div>
 				<div>
@@ -42,13 +56,14 @@ const htmlData = `
 				</article>
 			</section>
 			<section class="flex flex-col items-start mx-auto">
-				<div class="grid grid-cols-4 w-full gap-4">
-					<div class="col-start-1 col-span-2">
+				<div class="grid grid-cols-8 w-full gap-4">
+					<div class="col-start-1 col-span-3">
 						<label for="postRequest">Post request</label>
 						<input class="shadow-lg w-full" type="text" id="postRequest" />
 					</div>
 					<button
-						class="bg-slate-800 col-start-1 text-white shadow-lg p-2 rounded-md"
+						@click="post"
+						class="bg-slate-800 col-start-1 col-span-2 text-white shadow-lg p-2 rounded-md"
 					>
 						Send
 					</button>
