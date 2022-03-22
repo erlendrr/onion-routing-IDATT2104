@@ -16,7 +16,7 @@ onionNodes.forEach(({ address, key }) => {
 			return
 		}
 		const encryptedData: string = req.body.data
-		const data = JSON.parse(decrypt(encryptedData, key)) as Block
+		const data = JSON.parse(decrypt(encryptedData, key.private)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
 		const answer = await axios.post(
 			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
@@ -24,7 +24,7 @@ onionNodes.forEach(({ address, key }) => {
 				data: data.data,
 			}
 		)
-		const reply = encrypt(JSON.stringify(answer.data), key)
+		const reply = encrypt(JSON.stringify(answer.data), key.private)
 		res.send(reply)
 	})
 	route.post('/hs', async (req, res) => {

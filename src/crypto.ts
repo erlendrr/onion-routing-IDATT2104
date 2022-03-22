@@ -48,7 +48,7 @@ export function createPackets(
 	}
 	if (i == nodes.length - 1) {
 		return createPackets(
-			encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key),
+			encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key.private),
 			nodes,
 			i - 1,
 			goal
@@ -57,7 +57,7 @@ export function createPackets(
 	return createPackets(
 		encrypt(
 			JSON.stringify(createBlock(data, nodes[i + 1].address)),
-			nodes[i].key
+			nodes[i].key.private
 		),
 		nodes,
 		i - 1,
@@ -73,5 +73,9 @@ export function decryptPackets(
 	if (i > nodes.length - 1) {
 		return data
 	}
-	return decryptPackets(JSON.parse(decrypt(data, nodes[i].key)), nodes, i + 1)
+	return decryptPackets(
+		JSON.parse(decrypt(data, nodes[i].key.private)),
+		nodes,
+		i + 1
+	)
 }
