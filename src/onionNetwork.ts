@@ -10,6 +10,24 @@ onionNodes.forEach(({ address, key }) => {
 	route.listen(address.port, () => {
 		console.log(`Onion node listening on port ${address.port}`)
 	})
+	route.get('/', async (req, res) => {
+		if (!req.query[0]) {
+			res.send('No data')
+			return
+		}
+		const encryptedData = req.query[0] as string
+		const data = JSON.parse(decrypt(encryptedData, key.private)) as Block
+		console.log(`OnionNode: ${address.ip}:${address.port}`)
+		const answer = await axios.get(
+			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
+			{
+				params: data.data,
+			}
+		)
+		const reply = encrypt(JSON.stringify(answer.data), key.private)
+		res.send(reply)
+	})
+
 	route.post('/', async (req, res) => {
 		if (!req.body?.data) {
 			res.send('No data')

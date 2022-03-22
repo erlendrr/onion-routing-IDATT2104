@@ -4,10 +4,6 @@ import onionNodes from './onionNodes'
 import axios from 'axios'
 import power from './handshake'
 
-const data = `
-Hello world
-`
-
 const nodes = onionNodes
 const goal: Address = {
 	ip: 'http://localhost',
@@ -42,10 +38,26 @@ nodes.forEach(node => {
 		})
 })
 
-axios
-	.post(`${nodes[0].address.ip}:${nodes[0].address.port}`, {
-		data: createPackets(data, nodes, onionNodes.length - 1, goal),
-	})
-	.then(answer => {
-		console.log(decryptPackets(answer.data, onionNodes, 0))
-	})
+async function post(goal: Address, data: string) {
+	const res = await axios.post(
+		`${nodes[0].address.ip}:${nodes[0].address.port}`,
+		{
+			data: createPackets(data, nodes, onionNodes.length - 1, goal),
+		}
+	)
+	return res
+}
+
+async function get(goal: Address) {
+	const res = await axios.get(
+		`${nodes[0].address.ip}:${nodes[0].address.port}`,
+		{
+			params: createPackets('', nodes, onionNodes.length - 1, goal),
+		}
+	)
+	console.log(decryptPackets(res.data, onionNodes, 0))
+	return decryptPackets(res.data, onionNodes, 0)
+}
+
+console.log(get(goal))
+console.log(post(goal, 'Hello'))
