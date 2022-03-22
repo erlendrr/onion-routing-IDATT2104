@@ -29,7 +29,7 @@ export interface Block {
 	nextNodeAddress: Address
 	data: string
 }
-//TODO: create block
+
 export function createBlock(data: string, nextAddress: Address): Block {
 	return {
 		nextNodeAddress: nextAddress,
@@ -73,9 +73,5 @@ export function decryptPackets(
 	if (i > nodes.length - 1) {
 		return data
 	}
-	return decryptPackets(
-		JSON.parse(decrypt(data, nodes[i].key)),
-		nodes,
-		i + 1
-	)
+	return decryptPackets(JSON.parse(decrypt(data, nodes[i].key)), nodes, i + 1)
 }
