@@ -30,6 +30,41 @@ const onionNodes: OnionNode[] = [
 			port: 8002,
 		},
 	},
+	{
+		key: '2A472D4A614E645267556B5870327335',
+		address: {
+			ip: 'http://localhost',
+			port: 8003,
+		},
+	},
+	{
+		key: '2A472D4A614E645267556B5870327335',
+		address: {
+			ip: 'http://localhost',
+			port: 8004,
+		},
+	},
+	{
+		key: '2A472D4A614E645267556B5870327335',
+		address: {
+			ip: 'http://localhost',
+			port: 8006,
+		},
+	},
+	{
+		key: '2A472D4A614E645267556B5870327335',
+		address: {
+			ip: 'http://localhost',
+			port: 8007,
+		},
+	},
+	{
+		key: '2A472D4A614E645267556B5870327335',
+		address: {
+			ip: 'http://localhost',
+			port: 8008,
+		},
+	},
 ]
 
 export default onionNodes
