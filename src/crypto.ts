@@ -40,6 +40,7 @@ export function createBlock(data: string, nextAddress: Address): Block {
 export function createPackets(
 	data: string,
 	nodes: OnionNode[],
+	keys: string[],
 	i: number,
 	goal: Address
 ): string {
@@ -48,18 +49,17 @@ export function createPackets(
 	}
 	if (i == nodes.length - 1) {
 		return createPackets(
-			encrypt(JSON.stringify(createBlock(data, goal)), nodes[i].key.private),
+			encrypt(JSON.stringify(createBlock(data, goal)), keys[i]),
 			nodes,
+			keys,
 			i - 1,
 			goal
 		)
 	}
 	return createPackets(
-		encrypt(
-			JSON.stringify(createBlock(data, nodes[i + 1].address)),
-			nodes[i].key.private
-		),
+		encrypt(JSON.stringify(createBlock(data, nodes[i + 1].address)), keys[i]),
 		nodes,
+		keys,
 		i - 1,
 		goal
 	)
@@ -68,14 +68,11 @@ export function createPackets(
 export function decryptPackets(
 	data: string,
 	nodes: OnionNode[],
+	keys: string[],
 	i: number
 ): String {
 	if (i > nodes.length - 1) {
 		return data
 	}
-	return decryptPackets(
-		JSON.parse(decrypt(data, nodes[i].key.private)),
-		nodes,
-		i + 1
-	)
+	return decryptPackets(JSON.parse(decrypt(data, keys[i])), nodes, keys, i + 1)
 }

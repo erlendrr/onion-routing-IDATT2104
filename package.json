@@ -8,7 +8,6 @@
 		"client": "ts-node ./src/client.ts",
 		"server": "ts-node ./src/server.ts",
 		"network": "ts-node ./src/onionNetwork.ts",
-		"serverNodes": "ts-node ./src/serverNodes.ts",
 		"prettier": "prettier --write .",
 		"prepare": "husky install"
 	},

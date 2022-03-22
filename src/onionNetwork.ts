@@ -1,11 +1,12 @@
 import axios from 'axios'
 import express from 'express'
 import { Block, decrypt, encrypt } from './crypto'
-import power from './handshake'
 import onionNodes from './onionNodes'
+import { createDiffieHellman } from 'crypto'
 
-onionNodes.forEach(({ address, key }) => {
+onionNodes.forEach(({ address }) => {
 	const route = express()
+	let key: string
 	route.use(express.json({ limit: '1000mb' }))
 	route.listen(address.port, () => {
 		console.log(`Onion node listening on port ${address.port}`)
@@ -16,7 +17,7 @@ onionNodes.forEach(({ address, key }) => {
 			return
 		}
 		const encryptedData = req.query[0] as string
-		const data = JSON.parse(decrypt(encryptedData, key.private)) as Block
+		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
 		const answer = await axios.get(
 			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
@@ -24,7 +25,7 @@ onionNodes.forEach(({ address, key }) => {
 				params: data.data,
 			}
 		)
-		const reply = encrypt(JSON.stringify(answer.data), key.private)
+		const reply = encrypt(JSON.stringify(answer.data), key)
 		res.send(reply)
 	})
 
@@ -34,7 +35,7 @@ onionNodes.forEach(({ address, key }) => {
 			return
 		}
 		const encryptedData: string = req.body.data
-		const data = JSON.parse(decrypt(encryptedData, key.private)) as Block
+		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
 		const answer = await axios.post(
 			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
@@ -42,21 +43,30 @@ onionNodes.forEach(({ address, key }) => {
 				data: data.data,
 			}
 		)
-		const reply = encrypt(JSON.stringify(answer.data), key.private)
+		const reply = encrypt(JSON.stringify(answer.data), key)
 		res.send(reply)
 	})
 	route.post('/hs', async (req, res) => {
-		if (!req.body?.generatedKey) {
-			res.send('No data')
+		if (!req.body?.prime) {
+			res.send('No prime')
 			return
 		}
-		const handshakeInfo = req.body.generatedKey
-		const genKey = power(9, address.port - 7988, 23)
+		if (!req.body?.publicKey) {
+			res.send('publicKey')
+			return
+		}
+		const buffer = Buffer.from(req.body.prime.data)
+		const diffieHellman = createDiffieHellman(buffer)
+		diffieHellman.generateKeys('hex')
 		res.send({
-			generatedKey: genKey,
+			publicKey: diffieHellman.getPublicKey('hex'),
 		})
-		console.log(
-			address.port + "'s key: " + power(handshakeInfo, address.port - 7988, 23)
+		const sharedKey = diffieHellman.computeSecret(
+			req.body.publicKey,
+			'hex',
+			'hex'
 		)
+		console.log(address.port + "'s key: " + sharedKey)
+		key = sharedKey
 	})
 })
