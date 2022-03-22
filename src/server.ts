@@ -2,6 +2,7 @@ import axios from 'axios'
 import express from 'express'
 import {Block, decrypt, encrypt} from './crypto'
 import onionNodes, { OnionNode, Address } from './onionNodes'
+import {power} from "./handshake";
 
 onionNodes.forEach(({ address, key }) => {
 	const route = express()
@@ -25,9 +26,21 @@ onionNodes.forEach(({ address, key }) => {
 			}
 		)
 		const reply = encrypt(JSON.stringify(answer.data), key)
-		console.log(reply +"\n")
 		res.send(reply)
 	})
+	route.post('/hs', async(req, res) =>{
+		if (!req.body?.generatedKey) {
+			res.send('No data')
+			return
+		}
+		const handshakeInfo = req.body.generatedKey
+		const genKey = power(9, address.port-7988, 23)
+		res.send({
+			generatedKey: genKey
+		})
+		console.log(address.port + "'s key: " + power(handshakeInfo, address.port-7988, 23))
+	})
+
 })
 
 const app = express()
