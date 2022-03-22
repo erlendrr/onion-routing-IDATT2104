@@ -69,15 +69,12 @@ export function decryptPackets(
 	data: string,
 	nodes: OnionNode[],
 	i: number
-): Block {
+): String {
 	if (i > nodes.length - 1) {
-		return JSON.parse(data)
-	}
-	if (i === 0) {
-		return decryptPackets(decrypt(data, nodes[i].key), nodes, i + 1)
+		return data
 	}
 	return decryptPackets(
-		decrypt(JSON.parse(data).data, nodes[i].key),
+		JSON.parse(decrypt(data, nodes[i].key)),
 		nodes,
 		i + 1
 	)
