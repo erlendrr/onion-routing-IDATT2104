@@ -3,6 +3,7 @@ export interface Address {
 	port: number
 }
 
+//TODO: Fjern address maybe refactor
 export interface OnionNode {
 	address: Address
 }

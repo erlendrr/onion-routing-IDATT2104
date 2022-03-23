@@ -70,7 +70,7 @@ export function decryptPackets(
 	nodes: OnionNode[],
 	keys: string[],
 	i: number
-): String {
+): string {
 	if (i > nodes.length - 1) {
 		return data
 	}
