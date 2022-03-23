@@ -1,15 +1,12 @@
-import { createPackets, decryptPackets, Block, decrypt } from './cryptoCustom'
+import { createPackets, decryptPackets } from './cryptoCustom'
 import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
 import { createDiffieHellman } from 'crypto'
 
-const nodes = onionNodes
-const goal: Address = {
-	ip: 'http://localhost',
-	port: 3333,
-}
-let keys: string[] = []
+const allNodes = onionNodes
+let routeNodes: OnionNode[]
+let keys: string[]
 
 function shuffle(arr: OnionNode[]) {
 	for (var i = arr.length - 1; i > 0; i--) {
@@ -19,8 +16,6 @@ function shuffle(arr: OnionNode[]) {
 		arr[j] = temp
 	}
 }
-shuffle(nodes)
-nodes.splice(0, nodes.length - 3)
 
 async function handshake() {
 	const primeLength = 128
@@ -28,7 +23,7 @@ async function handshake() {
 	const publicKey = dh.generateKeys('hex')
 	const keys: string[] = []
 
-	for (const node of nodes) {
+	for (const node of routeNodes) {
 		const res = await axios.post(`${node.address.ip}:${node.address.port}/hs`, {
 			prime: dh.getPrime(),
 			publicKey: publicKey,
@@ -41,32 +36,44 @@ async function handshake() {
 
 async function post(goal: Address, data: string) {
 	const res = await axios.post(
-		`${nodes[0].address.ip}:${nodes[0].address.port}`,
+		`${routeNodes[0].address.ip}:${routeNodes[0].address.port}`,
 		{
-			data: createPackets(data, nodes, keys, onionNodes.length - 1, goal),
+			data: createPackets(data, routeNodes, keys, routeNodes.length - 1, goal),
 		}
 	)
-	console.log(decryptPackets(res.data, onionNodes, keys, 0))
-	return decryptPackets(res.data, onionNodes, keys, 0)
+	console.log(decryptPackets(res.data, routeNodes, keys, 0))
+	return decryptPackets(res.data, routeNodes, keys, 0)
 }
 
 async function get(goal: Address) {
 	const res = await axios.get(
-		`${nodes[0].address.ip}:${nodes[0].address.port}`,
+		`${routeNodes[0].address.ip}:${routeNodes[0].address.port}`,
 		{
-			params: createPackets('', nodes, keys, onionNodes.length - 1, goal),
+			params: createPackets('', routeNodes, keys, routeNodes.length - 1, goal),
 		}
 	)
-	return decryptPackets(res.data, onionNodes, keys, 0)
+	return decryptPackets(res.data, routeNodes, keys, 0)
 }
 
 //TODO: Vurder å reformater
-handshake().then(answer => {
-	keys = answer
-	get(goal).then(res => {
-		console.log(res)
+async function createRoute() {
+	routeNodes = []
+	allNodes.forEach(node => {
+		routeNodes.push(node)
 	})
-})
+	shuffle(routeNodes)
+	routeNodes.splice(0, routeNodes.length - 3)
+	keys = await handshake()
+}
 
-//console.log(get(goal))
-//console.log(post(goal, 'Hello'))
+/**
+ * For testing only
+ */
+async function run() {
+	await createRoute()
+	const ans = await get({
+		ip: 'http://localhost',
+		port: 3333,
+	})
+	console.log(ans)
+}
