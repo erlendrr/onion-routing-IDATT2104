@@ -1,6 +1,6 @@
 import axios from 'axios'
 import express from 'express'
-import { Block, decrypt, encrypt } from './crypto'
+import { Block, decrypt, encrypt } from './cryptoCustom'
 import onionNodes from './onionNodes'
 import { createDiffieHellman } from 'crypto'
 
@@ -52,7 +52,7 @@ onionNodes.forEach(({ address }) => {
 			return
 		}
 		if (!req.body?.publicKey) {
-			res.send('publicKey')
+			res.send('No publicKey')
 			return
 		}
 		const buffer = Buffer.from(req.body.prime.data)

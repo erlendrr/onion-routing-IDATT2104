@@ -1,4 +1,4 @@
-import { createPackets, decryptPackets, Block, decrypt } from './crypto'
+import { createPackets, decryptPackets, Block, decrypt } from './cryptoCustom'
 import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
@@ -23,8 +23,8 @@ shuffle(nodes)
 nodes.splice(0, nodes.length - 3)
 
 async function handshake() {
-	const prime = 128
-	const dh = createDiffieHellman(prime)
+	const primeLength = 128
+	const dh = createDiffieHellman(primeLength)
 	const publicKey = dh.generateKeys('hex')
 	const keys: string[] = []
 
@@ -60,6 +60,7 @@ async function get(goal: Address) {
 	return decryptPackets(res.data, onionNodes, keys, 0)
 }
 
+//TODO: Vurder å reformater
 handshake().then(answer => {
 	keys = answer
 	get(goal).then(res => {

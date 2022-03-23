@@ -1,5 +1,5 @@
 import express from 'express'
-import { Block } from './crypto'
+import { Block } from './cryptoCustom'
 
 const app = express()
 app.use(express.json())
