@@ -9,7 +9,8 @@
 		"server": "ts-node ./src/server.ts",
 		"network": "ts-node ./src/onionNetwork.ts",
 		"prettier": "prettier --write .",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"test": "jest"
 	},
 	"lint-staged": {
 		"**/*": "prettier --write --ignore-unknown"
@@ -17,8 +18,10 @@
 	"devDependencies": {
 		"@types/cors": "^2.8.12",
 		"@types/express": "^4.17.13",
+		"@types/jest": "^27.4.1",
 		"@types/node": "^17.0.21",
 		"husky": "^7.0.4",
+		"jest": "^27.5.1",
 		"lint-staged": "^12.3.7",
 		"prettier": "^2.6.0",
 		"ts-node": "^10.7.0",
