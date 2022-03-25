@@ -1,8 +1,10 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { run } from '../lib/client';
 
 const Hello = () => {
+  run();
   return (
-    <div className="min-h-screen bg-gray-200">
+    <div className="min-h-screen bg-gray-200 ">
       <div className="container mx-auto p-8 md:py-8 md:px-16 space-y-8">
         <section className="space-y-2">
           <h1 className="text-center text-4xl font-bold">Onion Routing</h1>

@@ -1,8 +1,8 @@
 import { createDiffieHellman } from 'crypto';
 
-import { createPackets, decryptPackets } from './cryptoCustom'
-import { Address, OnionNode } from './onionNodes';
-import onionNodes from './onionNodes';
+import { createPackets, decryptPackets } from '../../../src/cryptoCustom';
+import { Address, OnionNode } from '../../../src/onionNodes';
+import onionNodes from '../../../src/onionNodes';
 import axios from 'axios';
 
 function shuffle(arr: OnionNode[]) {
@@ -88,5 +88,3 @@ export async function run() {
   );
   console.log(ans);
 }
-
-run()

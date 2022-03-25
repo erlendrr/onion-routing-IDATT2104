@@ -3,9 +3,16 @@ import express from 'express'
 import { Block, decrypt, encrypt } from './cryptoCustom'
 import onionNodes from './onionNodes'
 import { createDiffieHellman } from 'crypto'
+import cors from 'cors'
 
 onionNodes.forEach(({ address }) => {
 	const route = express()
+	route.use(cors())
+	const allowedOrigins = ['http://localhost:3000']
+	const options: cors.CorsOptions = {
+		origin: allowedOrigins,
+	}
+	route.use(cors(options))
 	let key: string
 	route.use(express.json({ limit: '1000mb' }))
 	route.listen(address.port, () => {
@@ -47,6 +54,8 @@ onionNodes.forEach(({ address }) => {
 		res.send(reply)
 	})
 	route.post('/hs', async (req, res) => {
+		console.log(req)
+
 		if (!req.body?.prime) {
 			res.send('No prime')
 			return
@@ -56,16 +65,13 @@ onionNodes.forEach(({ address }) => {
 			return
 		}
 		const buffer = Buffer.from(req.body.prime.data)
+		const publicKey = Buffer.from(req.body.publicKey.data).toString('hex')
 		const diffieHellman = createDiffieHellman(buffer)
 		diffieHellman.generateKeys('hex')
 		res.send({
 			publicKey: diffieHellman.getPublicKey('hex'),
 		})
-		const sharedKey = diffieHellman.computeSecret(
-			req.body.publicKey,
-			'hex',
-			'hex'
-		)
+		const sharedKey = diffieHellman.computeSecret(publicKey, 'hex', 'hex')
 		console.log(address.port + "'s key: " + sharedKey)
 		key = sharedKey
 	})
