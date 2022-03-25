@@ -26,12 +26,9 @@ onionNodes.forEach(({ address }) => {
 		const encryptedData = req.query[0] as string
 		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
-		const answer = await axios.get(
-			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
-			{
-				params: data.data,
-			}
-		)
+		const answer = await axios.get(data.nextNodeAddress, {
+			params: data.data,
+		})
 		const reply = encrypt(JSON.stringify(answer.data), key)
 		res.send(reply)
 	})
@@ -45,12 +42,9 @@ onionNodes.forEach(({ address }) => {
 
 		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
-		const answer = await axios.post(
-			`${data.nextNodeAddress.ip}:${data.nextNodeAddress.port}`,
-			{
-				data: data.data,
-			}
-		)
+		const answer = await axios.post(data.nextNodeAddress, {
+			data: data.data,
+		})
 		const reply = encrypt(JSON.stringify(answer.data), key)
 		res.send(reply)
 	})

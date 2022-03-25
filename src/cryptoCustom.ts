@@ -26,11 +26,11 @@ export const decrypt = (data: string, key: string) => {
 }
 
 export interface Block {
-	nextNodeAddress: Address
+	nextNodeAddress: string
 	data: string
 }
 
-export function createBlock(data: string, nextAddress: Address): Block {
+export function createBlock(data: string, nextAddress: string): Block {
 	return {
 		nextNodeAddress: nextAddress,
 		data: data,
@@ -42,7 +42,7 @@ export function createPackets(
 	nodes: OnionNode[],
 	keys: string[],
 	i: number,
-	goal: Address
+	goal: string
 ): string {
 	if (i < 0) {
 		return data
@@ -57,7 +57,15 @@ export function createPackets(
 		)
 	}
 	return createPackets(
-		encrypt(JSON.stringify(createBlock(data, nodes[i + 1].address)), keys[i]),
+		encrypt(
+			JSON.stringify(
+				createBlock(
+					data,
+					`${nodes[i + 1].address.ip}:${nodes[i + 1].address.port}`
+				)
+			),
+			keys[i]
+		),
 		nodes,
 		keys,
 		i - 1,
@@ -70,7 +78,7 @@ export function decryptPackets(
 	nodes: OnionNode[],
 	keys: string[],
 	i: number
-): string | { data: string } {
+): string {
 	if (i > nodes.length - 1) {
 		return data
 	}

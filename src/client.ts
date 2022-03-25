@@ -32,7 +32,7 @@ async function handshake(routeNodes: OnionNode[]) {
 }
 
 export async function post(
-	goal: Address,
+	goal: string,
 	data: string,
 	keys: string[],
 	routeNodes: OnionNode[]
@@ -47,7 +47,7 @@ export async function post(
 }
 
 export async function get(
-	goal: Address,
+	goal: string,
 	keys: string[],
 	routeNodes: OnionNode[]
 ) {
@@ -57,10 +57,8 @@ export async function get(
 			params: createPackets('', routeNodes, keys, routeNodes.length - 1, goal),
 		}
 	)
-	const decryptedPackets = decryptPackets(res.data, routeNodes, keys, 0) as {
-		data: string
-	}
-	return decryptedPackets.data
+	const decryptedPackets = decryptPackets(res.data, routeNodes, keys, 0)
+	return decryptedPackets
 }
 
 //TODO: Vurder å reformater
@@ -80,24 +78,14 @@ export async function createRoute(routeNodes: OnionNode[]) {
  */
 export async function run() {
 	const { keys, routeNodes } = await createRoute(onionNodes)
-	const getRes = await get(
-		{
-			ip: 'http://localhost',
-			port: 3333,
-		},
-		keys,
-		routeNodes
-	)
+	const getRes = await get('https://www.ntnu.no/', keys, routeNodes)
 	const postRes = await post(
-		{
-			ip: 'http://localhost',
-			port: 3333,
-		},
+		'http://localhost:3333',
 		'Hello World!',
 		keys,
 		routeNodes
 	)
-	console.log(`Get request: ${getRes}`)
+	console.log(`Get request: ${JSON.stringify(getRes)}`)
 	console.log(`Post request: ${postRes}`)
 }
 
