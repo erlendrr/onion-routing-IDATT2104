@@ -42,6 +42,7 @@ onionNodes.forEach(({ address }) => {
 			return
 		}
 		const encryptedData: string = req.body.data
+
 		const data = JSON.parse(decrypt(encryptedData, key)) as Block
 		console.log(`OnionNode: ${address.ip}:${address.port}`)
 		const answer = await axios.post(
@@ -54,8 +55,6 @@ onionNodes.forEach(({ address }) => {
 		res.send(reply)
 	})
 	route.post('/hs', async (req, res) => {
-		console.log(req)
-
 		if (!req.body?.prime) {
 			res.send('No prime')
 			return
@@ -65,7 +64,7 @@ onionNodes.forEach(({ address }) => {
 			return
 		}
 		const buffer = Buffer.from(req.body.prime.data)
-		const publicKey = Buffer.from(req.body.publicKey.data).toString('hex')
+		const publicKey = req.body.publicKey
 		const diffieHellman = createDiffieHellman(buffer)
 		diffieHellman.generateKeys('hex')
 		res.send({
