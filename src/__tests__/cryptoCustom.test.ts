@@ -1,4 +1,10 @@
-import { createPackets, decryptPackets } from '../cryptoCustom'
+import {
+	createPackets,
+	decryptPackets,
+	decrypt,
+	encrypt,
+	createBlock,
+} from '../cryptoCustom'
 const nodes = [
 	{ address: { ip: 'http://localhost', port: 8003 } },
 	{ address: { ip: 'http://localhost', port: 8002 } },
@@ -10,6 +16,35 @@ const keys = [
 	'511036b58efa447a3925ad971e13bdd5',
 ]
 const goal = 'http://localhost:3333'
+
+it('Test encrypt', () => {
+	const data = 'Test'
+	const key = '916ee07cd9274ee1c9966def25c223d5'
+
+	const encrypted = encrypt(data, key)
+	expect(typeof encrypted).toBe('string')
+})
+
+it('Test decrypt', () => {
+	const expected = 'Test'
+	const key = '916ee07cd9274ee1c9966def25c223d5'
+	const data =
+		'806c1f55fcb2a6d7ffcf6b5a2d87a4d2ef369f056a47871f1d2515e5835253ff'
+
+	const encrypted = decrypt(data, key)
+	expect(encrypted).toBe(expected)
+})
+
+it('Test createBlock', () => {
+	const address = 'testAddress'
+	const data = 'testData'
+	const expected = {
+		nextNodeAddress: address,
+		data: data,
+	}
+	const block = createBlock(data, address)
+	expect(block).toStrictEqual(expected)
+})
 
 it('creates packets', () => {
 	const packets = createPackets('hey', nodes, keys, nodes.length - 1, goal)

@@ -1,7 +1,7 @@
 import { createDiffieHellman } from 'crypto'
 
 import { createPackets, decryptPackets } from './cryptoCustom'
-import { Address, OnionNode } from './onionNodes'
+import { OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
 
@@ -16,15 +16,19 @@ if (userInput > onionNodes.length) {
 }
 
 function shuffle(arr: OnionNode[]) {
-	for (var i = arr.length - 1; i > 0; i--) {
-		var j = Math.floor(Math.random() * (i + 1))
-		var temp = arr[i]
+	for (let i = arr.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1))
+		const temp = arr[i]
 		arr[i] = arr[j]
 		arr[j] = temp
 	}
 }
 
-async function handshake(routeNodes: OnionNode[]) {
+/**
+ * Reaches out to each OnionNode in the file onionNodes.ts
+ * Performs a diffie-hellman key exchange, using the crypto library
+ */
+export async function handshake(routeNodes: OnionNode[]) {
 	const primeLength = 128
 	const dh = createDiffieHellman(primeLength)
 	const publicKey = dh.generateKeys('hex')
@@ -41,6 +45,9 @@ async function handshake(routeNodes: OnionNode[]) {
 	return keys
 }
 
+/**
+ * Sends a post request to a OnionNode with its given route
+ */
 export async function post(
 	goal: string,
 	data: string,
@@ -55,7 +62,9 @@ export async function post(
 	)
 	return decryptPackets(res.data, routeNodes, keys, 0)
 }
-
+/**
+ * Sends a get request to a OnionNode with its given route
+ */
 export async function get(
 	goal: string,
 	keys: string[],
@@ -67,11 +76,12 @@ export async function get(
 			params: createPackets('', routeNodes, keys, routeNodes.length - 1, goal),
 		}
 	)
-	const decryptedPackets = decryptPackets(res.data, routeNodes, keys, 0)
-	return decryptedPackets
+	return decryptPackets(res.data, routeNodes, keys, 0)
 }
 
-//TODO: Vurder å reformater
+/**
+ * Creates a route for the client to got through when using the Onion Network
+ */
 export async function createRoute(routeNodes: OnionNode[]) {
 	routeNodes = [...onionNodes]
 	shuffle(routeNodes)
@@ -98,5 +108,3 @@ export async function run() {
 	console.log(`Get request: ${JSON.stringify(getRes)}`)
 	console.log(`Post request: ${postRes}`)
 }
-
-run()

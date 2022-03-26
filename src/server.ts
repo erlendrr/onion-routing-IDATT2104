@@ -34,5 +34,5 @@ app.get('/', (req, res) => {
 const port = 3333
 
 app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`)
+	console.log(`Server listening on port ${port}`)
 })

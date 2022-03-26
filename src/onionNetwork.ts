@@ -5,6 +5,10 @@ import onionNodes from './onionNodes'
 import { createDiffieHellman } from 'crypto'
 import cors from 'cors'
 
+/**
+ * Creates a server for each OnionNode in the file onionNodes.ts
+ */
+
 onionNodes.forEach(({ address }) => {
 	const route = express()
 	route.use(cors())
@@ -54,7 +58,7 @@ onionNodes.forEach(({ address }) => {
 			return
 		}
 		if (!req.body?.publicKey) {
-			res.send('No publicKey')
+			res.send('No public key')
 			return
 		}
 		const buffer = Buffer.from(req.body.prime.data)
@@ -64,6 +68,7 @@ onionNodes.forEach(({ address }) => {
 		res.send({
 			publicKey: diffieHellman.getPublicKey('hex'),
 		})
+		console.log(diffieHellman.getPublicKey('hex'))
 		const sharedKey = diffieHellman.computeSecret(publicKey, 'hex', 'hex')
 		console.log(address.port + "'s key: " + sharedKey)
 		key = sharedKey

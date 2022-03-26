@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Address, OnionNode } from './onionNodes'
+import { OnionNode } from './onionNodes'
 
 const ALGORITHM = 'aes-256-cbc'
 const ENCODING = 'hex'
