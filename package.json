@@ -5,7 +5,7 @@
 	"author": "Erlend Ryan & Erlend Matre",
 	"license": "ISC",
 	"scripts": {
-		"client": "ts-node ./src/client.ts",
+		"client": "ts-node ./src/main.ts",
 		"server": "ts-node ./src/server.ts",
 		"network": "ts-node ./src/onionNetwork.ts",
 		"prettier": "prettier --write .",
