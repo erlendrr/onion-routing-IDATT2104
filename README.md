@@ -61,3 +61,6 @@ Klienten kan sende get- og post-requester til en server gjennom et nettverk av n
 
 - Express: Gjør det enkelt å ta i mot spørringer
 - Axios: Gjør det lett å sende spørringer
+
+### Lenke til siste continuous integration kjøring
+https://github.com/erlendrr/onion-routing-IDATT2104/actions/runs/2044802842
