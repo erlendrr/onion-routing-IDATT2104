@@ -61,4 +61,3 @@ Klienten kan sende get- og post-requester til en server gjennom et nettverk av n
 
 - Express: Gjør det enkelt å ta i mot spørringer
 - Axios: Gjør det lett å sende spørringer
--
