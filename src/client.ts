@@ -58,6 +58,7 @@ export async function get(
 		}
 	)
 	const decryptedPackets = decryptPackets(res.data, routeNodes, keys, 0)
+	console.log(res.data)
 	return decryptedPackets
 }
 
@@ -78,7 +79,7 @@ export async function createRoute(routeNodes: OnionNode[]) {
  */
 export async function run() {
 	const { keys, routeNodes } = await createRoute(onionNodes)
-	const getRes = await get('https://www.ntnu.no/', keys, routeNodes)
+	const getRes = await get('http://localhost:3333', keys, routeNodes)
 	const postRes = await post(
 		'http://localhost:3333',
 		'Hello World!',
