@@ -5,6 +5,16 @@ import { Address, OnionNode } from './onionNodes'
 import onionNodes from './onionNodes'
 import axios from 'axios'
 
+const args = process.argv.slice(2)
+
+let nodeCount = 3
+const userInput = parseInt(args[0])
+if (userInput > onionNodes.length) {
+	nodeCount = onionNodes.length - 2
+} else if (userInput > 1) {
+	nodeCount = userInput
+}
+
 function shuffle(arr: OnionNode[]) {
 	for (var i = arr.length - 1; i > 0; i--) {
 		var j = Math.floor(Math.random() * (i + 1))
@@ -58,7 +68,6 @@ export async function get(
 		}
 	)
 	const decryptedPackets = decryptPackets(res.data, routeNodes, keys, 0)
-	console.log(res.data)
 	return decryptedPackets
 }
 
@@ -66,7 +75,7 @@ export async function get(
 export async function createRoute(routeNodes: OnionNode[]) {
 	routeNodes = [...onionNodes]
 	shuffle(routeNodes)
-	routeNodes.splice(0, routeNodes.length - 3)
+	routeNodes.splice(0, routeNodes.length - nodeCount)
 	const keys = await handshake(routeNodes)
 	return {
 		keys,

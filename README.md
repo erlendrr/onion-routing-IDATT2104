@@ -25,7 +25,7 @@ npm run network
 Klient
 
 ```
-npm run client
+npm run client <node_count?>
 ```
 
 ### Testing
